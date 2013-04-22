@@ -1,0 +1,1 @@
+The Swallow is a server of Web Game.

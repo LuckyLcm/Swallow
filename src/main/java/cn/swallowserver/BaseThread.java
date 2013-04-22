@@ -1,0 +1,55 @@
+package cn.swallowserver;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+/**
+ * @author Chen Haoming
+ */
+public abstract class BaseThread extends Thread {
+
+    public static final int DEFAULT_TIMEOUT = 5000;
+    private static final transient Logger log = LoggerFactory.getLogger (BaseThread.class);
+
+    private boolean isRunning = true;
+
+    @Override
+    public final void run () {
+        preRunning ();
+
+        while (isRunning) {
+            try {
+                running ();
+            } catch (InterruptedException e) {
+                log.info ("This thread is interrupted and going to stop.");
+                break;
+            } catch (Throwable t) {
+                log.error ("Unexpected exception occurred.", t);
+            }
+        }
+
+        postRunning ();
+    }
+
+    protected abstract void preRunning ();
+
+    /**
+     * Running method which should be implemented by a concrete class.
+     * Please note that it's called in a while-cycle,
+     * so do not use cycle in the implemented method.
+     */
+    protected abstract void running () throws InterruptedException;
+
+    protected abstract void postRunning ();
+
+    /**
+     * Stop the current thread if it's alive. Otherwise it has no effect.
+     */
+    public void stopThread () {
+        if (this.isAlive ()) {
+            this.isRunning = false;
+            log.debug ("Stopping current thread.");
+        }
+
+    }
+}
