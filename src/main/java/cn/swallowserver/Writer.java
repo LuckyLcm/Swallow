@@ -8,6 +8,8 @@ import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
 import java.nio.charset.Charset;
 import java.util.Arrays;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 /**
  * @author Chen Haoming
@@ -16,8 +18,11 @@ public class Writer extends HandlerTread {
 
     private static final transient Logger log = LoggerFactory.getLogger (Writer.class);
 
+    private static BlockingQueue<Response> responseQueue;
+
     Writer (Server server) {
         super (server);
+        responseQueue = new LinkedBlockingQueue<Response>();
     }
 
     @Override
@@ -27,7 +32,8 @@ public class Writer extends HandlerTread {
 
     @Override
     protected void running () {
-        SocketChannel channel = getQueue().poll ();
+        Response response = responseQueue.poll();
+        SocketChannel channel = response.getSocketChannel();
         ByteBuffer buffer = getBuffer ();
         buffer.clear ();
         byte[] allBytesRead = new byte[0];
@@ -49,12 +55,16 @@ public class Writer extends HandlerTread {
 
         String msg = Charset.forName (getServer ().getEncoding ()).decode (ByteBuffer.wrap (allBytesRead)).toString ();
         buffer.clear ();
-        log.debug ("Read message: {}", msg);
+        log.debug ("Write message: {}", msg);
         // todo: deal with msg;
     }
 
     @Override
     protected void postRunning () {
 
+    }
+
+    public void write(Response response) {
+        responseQueue.offer(response);
     }
 }

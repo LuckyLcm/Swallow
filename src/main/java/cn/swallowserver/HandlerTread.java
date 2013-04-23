@@ -15,7 +15,6 @@ public abstract class HandlerTread extends BaseThread {
     private static final int CAPACITY = 1024;
 
     private Server server;
-    private BlockingQueue<SocketChannel> queue = new LinkedBlockingDeque<SocketChannel> ();
     private int bufferCapacity = CAPACITY;
     private int timeout = DEFAULT_TIMEOUT;
     private TimeUnit timeUnit = TimeUnit.MILLISECONDS;
@@ -57,11 +56,4 @@ public abstract class HandlerTread extends BaseThread {
         this.timeUnit = timeUnit;
     }
 
-    protected BlockingQueue<SocketChannel> getQueue () {
-        return queue;
-    }
-
-    void execute (SocketChannel socketChannel) {
-        getQueue().offer (socketChannel);
-    }
 }

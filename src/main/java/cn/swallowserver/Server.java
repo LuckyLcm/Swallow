@@ -2,6 +2,8 @@ package cn.swallowserver;
 
 import cn.swallowserver.event.Event;
 import cn.swallowserver.event.Notifier;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -17,7 +19,10 @@ import java.util.Iterator;
  */
 public class Server extends BaseThread {
 
+    private static final transient Logger log = LoggerFactory.getLogger(Server.class);
+
     public static final int PORT = 19999;
+    public static final String UTF_8 = "UTF-8";
 
     private Selector selector;
 
@@ -26,7 +31,7 @@ public class Server extends BaseThread {
 
     private Notifier notifier = new Notifier ();
 
-    private String encoding = "UTF-8";
+    private String encoding = UTF_8;
 
     public Server () throws IOException {
 
@@ -51,39 +56,41 @@ public class Server extends BaseThread {
     @Override
     protected void running () throws InterruptedException {
         try {
-            if (selector.select (DEFAULT_TIMEOUT) > 0) {
+            int len = selector.select(DEFAULT_TIMEOUT);
+            if (len > 0) {
                 Iterator<SelectionKey> iterator = selector.selectedKeys ().iterator ();
-
+                log.debug("{} SelectionKeys has been selected.", len);
                 while (iterator.hasNext ()) {
                     SelectionKey key = iterator.next ();
                     iterator.remove ();
 
-                    try {
+                    if (key.isValid()) {
                         if (key.isAcceptable ()) {
                             ServerSocketChannel channel = (ServerSocketChannel) key.channel ();
                             SocketChannel socketChannel = channel.accept ();
                             socketChannel.configureBlocking (false);
-                            socketChannel.register (selector, SelectionKey.OP_READ);
+                            SelectionKey selectionKey = socketChannel.register(selector, SelectionKey.OP_READ);
                             notifier.fireAccepted (new Event (key));
                         }
 
                         if (key.isReadable ()) {
-                            reader.execute ((SocketChannel) key.channel ());
+                            reader.read (new Request(key));
                             notifier.fireRead (new Event (key));
                         }
 
                         if (key.isWritable ()) {
-                            writer.execute ((SocketChannel) key.channel ());
+                            writer.write(new Response(key));
                             notifier.fireWritten (new Event (key));
                         }
 
                         if (key.isConnectable ()) {
 
                         }
-                    } finally {
-                        key.cancel ();
+                    } else {
+
                     }
 
+                    key.cancel ();
                 }
             }
 
