@@ -1,5 +1,6 @@
 package cn.swallowserver;
 
+import cn.swallowserver.session.NIOSocketRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -8,7 +9,6 @@ import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
 import java.nio.charset.Charset;
 import java.util.Arrays;
-import java.util.concurrent.BlockingDeque;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -19,11 +19,11 @@ public class Reader extends HandlerTread {
 
     private static final transient Logger log = LoggerFactory.getLogger (Reader.class);
 
-    private static BlockingQueue<Request> requestQueue;
+    private static BlockingQueue<NIOSocketRequest> requestQueue;
 
     Reader (Server server) {
         super (server);
-        requestQueue = new LinkedBlockingQueue<Request>();
+        requestQueue = new LinkedBlockingQueue<NIOSocketRequest>();
     }
 
     @Override
@@ -33,7 +33,7 @@ public class Reader extends HandlerTread {
 
     @Override
     protected void running () throws InterruptedException {
-        Request request = requestQueue.poll();
+        NIOSocketRequest request = requestQueue.poll();
         SocketChannel channel = request.getSocketChannel();
         ByteBuffer buffer = getBuffer ();
         buffer.clear ();
@@ -65,7 +65,7 @@ public class Reader extends HandlerTread {
 
     }
 
-    public void read(Request request) {
+    public void read(NIOSocketRequest request) {
         requestQueue.offer(request);
     }
 

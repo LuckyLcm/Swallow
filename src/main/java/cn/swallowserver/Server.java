@@ -2,6 +2,8 @@ package cn.swallowserver;
 
 import cn.swallowserver.event.Event;
 import cn.swallowserver.event.Notifier;
+import cn.swallowserver.session.NIOSocketRequest;
+import cn.swallowserver.session.NIOSocketResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -74,23 +76,20 @@ public class Server extends BaseThread {
                         }
 
                         if (key.isReadable ()) {
-                            reader.read (new Request(key));
+                            //reader.read (new NIOSocketRequest (key));
                             notifier.fireRead (new Event (key));
                         }
 
                         if (key.isWritable ()) {
-                            writer.write(new Response(key));
+                            //writer.write(new NIOSocketResponse (key));
                             notifier.fireWritten (new Event (key));
                         }
-
-                        if (key.isConnectable ()) {
-
-                        }
                     } else {
-
+                        log.warn ("Key[{}] is invalid.", key);
+                        key.cancel ();
                     }
 
-                    key.cancel ();
+
                 }
             }
 
