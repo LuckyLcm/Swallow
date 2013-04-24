@@ -1,6 +1,6 @@
 package cn.swallowserver;
 
-import cn.swallowserver.session.NIOSocketResponse;
+import cn.swallowserver.session.nio.NIOSocketResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -2,8 +2,6 @@ package cn.swallowserver;
 
 import cn.swallowserver.event.Event;
 import cn.swallowserver.event.Notifier;
-import cn.swallowserver.session.NIOSocketRequest;
-import cn.swallowserver.session.NIOSocketResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
