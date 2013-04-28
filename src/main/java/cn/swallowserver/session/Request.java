@@ -5,4 +5,7 @@ package cn.swallowserver.session;
  */
 public interface Request {
 
+    byte[] getOriginalRequest();
+
+    String getJSONRequest();
 }

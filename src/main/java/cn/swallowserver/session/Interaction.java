@@ -8,9 +8,5 @@ import java.nio.channels.SocketChannel;
  */
 public interface Interaction {
 
-    SelectionKey getSelectionKey ();
-
-    SocketChannel getSocketChannel ();
-
     Session getSession ();
 }
