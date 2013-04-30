@@ -73,20 +73,20 @@ public class Server extends BaseThread {
                     iterator.remove ();
 
                     if (key.isValid ()) {
-                        if (key.isAcceptable ()) {
+                        if (key.isAcceptable()) {
                             ServerSocketChannel channel = (ServerSocketChannel) key.channel ();
                             NIOSession session = NIOSession.create (selector, channel);
                             socketChannelSessionMap.put (session.getSocketChannel (), session);
-                            notifier.fireAccepted (new Event (key));
+                            notifier.fireAccepted(new Event(key));
                         }
 
-                        if (key.isReadable ()) {
-                            //reader.read (new NIOSocketRequest (key));
-                            notifier.fireRead (new Event (key));
+                        if (key.isReadable()) {
+                            //reader.read (new BaseRequest (key));
+                            notifier.fireRead(new Event(key));
                         }
                     } else {
                         log.warn ("Key[{}] is invalid.", key);
-                        key.channel ();
+                        key.channel();
                         key.cancel ();
                     }
 
