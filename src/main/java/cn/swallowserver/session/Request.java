@@ -1,11 +1,11 @@
 package cn.swallowserver.session;
 
+import java.io.InputStream;
+
 /**
  * @author Chen Haoming
  */
 public interface Request {
 
-    byte[] getOriginalRequest();
-
-    String getJSONRequest();
+    InputStream getIn();
 }
