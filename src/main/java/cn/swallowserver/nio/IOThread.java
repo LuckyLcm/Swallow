@@ -1,16 +1,15 @@
-package cn.swallowserver;
+package cn.swallowserver.nio;
+
+import cn.swallowserver.BaseThread;
 
 import java.lang.ref.SoftReference;
 import java.nio.ByteBuffer;
-import java.nio.channels.SocketChannel;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.TimeUnit;
 
 /**
  * @author Chen Haoming
  */
-public abstract class InteractionHandlerTread extends BaseThread {
+public abstract class IOThread extends BaseThread {
 
     private static final int CAPACITY = 1024;
 
@@ -20,7 +19,10 @@ public abstract class InteractionHandlerTread extends BaseThread {
     private TimeUnit timeUnit = TimeUnit.MILLISECONDS;
     private SoftReference<ByteBuffer> bufferCache;
 
-    InteractionHandlerTread(Server server) {
+    IOThread(Server server) {
+        if (null == server) {
+            throw new NullPointerException("Server is null!");
+        }
         this.server = server;
     }
 

@@ -1,9 +1,11 @@
-package cn.swallowserver;
+package cn.swallowserver.nio;
 
+import cn.swallowserver.AttributeHolder;
+import cn.swallowserver.BaseThread;
+import cn.swallowserver.HandlerThread;
 import cn.swallowserver.event.Event;
 import cn.swallowserver.event.Notifier;
 import cn.swallowserver.session.Session;
-import cn.swallowserver.session.nio.NIOSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,7 +23,7 @@ import java.util.Map;
 /**
  * @author Chen Haoming
  */
-public class Server extends BaseThread {
+public class Server extends BaseThread implements AttributeHolder {
 
     private static final transient Logger log = LoggerFactory.getLogger (Server.class);
 
@@ -32,6 +34,7 @@ public class Server extends BaseThread {
 
     private Reader reader;
     private Writer writer;
+    private HandlerThread handlerThread;
 
     private Map<SocketChannel, Session> socketChannelSessionMap = new HashMap<SocketChannel, Session> ();
 
@@ -86,7 +89,6 @@ public class Server extends BaseThread {
                         }
                     } else {
                         log.warn ("Key[{}] is invalid.", key);
-                        key.channel();
                         key.cancel ();
                     }
 
@@ -119,5 +121,23 @@ public class Server extends BaseThread {
 
     public void setEncoding (String encoding) {
         this.encoding = encoding;
+    }
+
+    public void setHandlerThread(HandlerThread handlerThread) {
+        this.handlerThread = handlerThread;
+    }
+
+    HandlerThread getHandlerThread() {
+        return handlerThread;
+    }
+
+    @Override
+    public Object getAttribute(String key) {
+        throw new UnsupportedOperationException();  //To change body of created methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public void setAttribute(String key, Object value) {
+        throw new UnsupportedOperationException();  //To change body of created methods use File | Settings | File Templates.
     }
 }

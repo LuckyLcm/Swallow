@@ -1,6 +1,5 @@
-package cn.swallowserver;
+package cn.swallowserver.nio;
 
-import cn.swallowserver.session.BaseRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,15 +14,15 @@ import java.util.concurrent.LinkedBlockingQueue;
 /**
  * @author Chen Haoming
  */
-public class Reader extends InteractionHandlerTread {
+public class Writer extends IOThread {
 
-    private static final transient Logger log = LoggerFactory.getLogger (Reader.class);
+    private static final transient Logger log = LoggerFactory.getLogger (Writer.class);
 
-    private static BlockingQueue<BaseRequest> requestQueue;
+    private static BlockingQueue<NIOResponse> responseQueue;
 
-    Reader (Server server) {
+    Writer (Server server) {
         super (server);
-        requestQueue = new LinkedBlockingQueue<BaseRequest>();
+        responseQueue = new LinkedBlockingQueue<NIOResponse>();
     }
 
     @Override
@@ -32,9 +31,9 @@ public class Reader extends InteractionHandlerTread {
     }
 
     @Override
-    protected void running () throws InterruptedException {
-        BaseRequest request = requestQueue.poll();
-        SocketChannel channel = request.getSocketChannel();
+    protected void running () {
+        NIOResponse response = responseQueue.poll();
+        SocketChannel channel = response.getSocketChannel();
         ByteBuffer buffer = getBuffer ();
         buffer.clear ();
         byte[] allBytesRead = new byte[0];
@@ -56,7 +55,7 @@ public class Reader extends InteractionHandlerTread {
 
         String msg = Charset.forName (getServer ().getEncoding ()).decode (ByteBuffer.wrap (allBytesRead)).toString ();
         buffer.clear ();
-        log.debug ("Read message: {}", msg);
+        log.debug ("Write message: {}", msg);
         // todo: deal with msg;
     }
 
@@ -65,8 +64,7 @@ public class Reader extends InteractionHandlerTread {
 
     }
 
-    public void read(BaseRequest request) {
-        requestQueue.offer(request);
+    public void write(NIOResponse response) {
+        responseQueue.offer(response);
     }
-
 }

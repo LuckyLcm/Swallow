@@ -1,11 +1,11 @@
-package cn.swallowserver;
+package cn.swallowserver.nio;
 
-import cn.swallowserver.session.BaseResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.nio.channels.SelectionKey;
 import java.nio.channels.SocketChannel;
 import java.nio.charset.Charset;
 import java.util.Arrays;
@@ -15,15 +15,15 @@ import java.util.concurrent.LinkedBlockingQueue;
 /**
  * @author Chen Haoming
  */
-public class Writer extends InteractionHandlerTread {
+public class Reader extends IOThread {
 
-    private static final transient Logger log = LoggerFactory.getLogger (Writer.class);
+    private static final transient Logger log = LoggerFactory.getLogger (Reader.class);
 
-    private static BlockingQueue<BaseResponse> responseQueue;
+    private static BlockingQueue<SelectionKey> selectionKeys;
 
-    Writer (Server server) {
+    Reader (Server server) {
         super (server);
-        responseQueue = new LinkedBlockingQueue<BaseResponse>();
+        selectionKeys = new LinkedBlockingQueue<SelectionKey>();
     }
 
     @Override
@@ -32,9 +32,9 @@ public class Writer extends InteractionHandlerTread {
     }
 
     @Override
-    protected void running () {
-        BaseResponse response = responseQueue.poll();
-        SocketChannel channel = response.getSocketChannel();
+    protected void running () throws InterruptedException {
+        SelectionKey selectionKey = selectionKeys.poll();
+        SocketChannel channel = (SocketChannel)selectionKey.channel();
         ByteBuffer buffer = getBuffer ();
         buffer.clear ();
         byte[] allBytesRead = new byte[0];
@@ -54,9 +54,10 @@ public class Writer extends InteractionHandlerTread {
             return;
         }
 
+
         String msg = Charset.forName (getServer ().getEncoding ()).decode (ByteBuffer.wrap (allBytesRead)).toString ();
         buffer.clear ();
-        log.debug ("Write message: {}", msg);
+        log.debug ("Read message: {}", msg);
         // todo: deal with msg;
     }
 
@@ -65,7 +66,8 @@ public class Writer extends InteractionHandlerTread {
 
     }
 
-    public void write(BaseResponse response) {
-        responseQueue.offer(response);
+    public void read(SelectionKey selectionKey) {
+        selectionKeys.offer(selectionKey);
     }
+
 }

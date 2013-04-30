@@ -1,7 +1,6 @@
-package cn.swallowserver.session.nio;
+package cn.swallowserver.nio;
 
 import cn.swallowserver.session.BaseSession;
-import cn.swallowserver.session.Session;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;

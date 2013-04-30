@@ -1,11 +1,16 @@
 package cn.swallowserver.session;
 
+import cn.swallowserver.AttributeHolder;
+
 import java.io.InputStream;
 
 /**
  * @author Chen Haoming
  */
-public interface Request {
+public interface Request extends AttributeHolder {
 
-    InputStream getIn();
+    //InputStream getIn();
+
+    byte[] getOriginalMessage();
+
 }
