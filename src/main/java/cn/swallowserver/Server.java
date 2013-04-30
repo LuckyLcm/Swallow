@@ -2,6 +2,8 @@ package cn.swallowserver;
 
 import cn.swallowserver.event.Event;
 import cn.swallowserver.event.Notifier;
+import cn.swallowserver.session.Session;
+import cn.swallowserver.session.nio.NIOSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -12,14 +14,16 @@ import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 /**
  * @author Chen Haoming
  */
 public class Server extends BaseThread {
 
-    private static final transient Logger log = LoggerFactory.getLogger(Server.class);
+    private static final transient Logger log = LoggerFactory.getLogger (Server.class);
 
     public static final int PORT = 19999;
     public static final String UTF_8 = "UTF-8";
@@ -29,7 +33,9 @@ public class Server extends BaseThread {
     private Reader reader;
     private Writer writer;
 
-    private Notifier notifier = new Notifier ();
+    private Map<SocketChannel, Session> socketChannelSessionMap = new HashMap<SocketChannel, Session> ();
+
+    Notifier notifier = new Notifier ();
 
     private String encoding = UTF_8;
 
@@ -56,20 +62,21 @@ public class Server extends BaseThread {
     @Override
     protected void running () throws InterruptedException {
         try {
-            int len = selector.select(DEFAULT_TIMEOUT);
+            int len = selector.select (DEFAULT_TIMEOUT);
+
             if (len > 0) {
                 Iterator<SelectionKey> iterator = selector.selectedKeys ().iterator ();
-                log.debug("{} SelectionKeys has been selected.", len);
+                log.debug ("{} SelectionKeys has been selected.", len);
+
                 while (iterator.hasNext ()) {
                     SelectionKey key = iterator.next ();
                     iterator.remove ();
 
-                    if (key.isValid()) {
+                    if (key.isValid ()) {
                         if (key.isAcceptable ()) {
                             ServerSocketChannel channel = (ServerSocketChannel) key.channel ();
-                            SocketChannel socketChannel = channel.accept ();
-                            socketChannel.configureBlocking (false);
-                            SelectionKey selectionKey = socketChannel.register(selector, SelectionKey.OP_READ);
+                            NIOSession session = NIOSession.create (selector, channel);
+                            socketChannelSessionMap.put (session.getSocketChannel (), session);
                             notifier.fireAccepted (new Event (key));
                         }
 
@@ -77,16 +84,11 @@ public class Server extends BaseThread {
                             //reader.read (new NIOSocketRequest (key));
                             notifier.fireRead (new Event (key));
                         }
-
-                        if (key.isWritable ()) {
-                            //writer.write(new NIOSocketResponse (key));
-                            notifier.fireWritten (new Event (key));
-                        }
                     } else {
                         log.warn ("Key[{}] is invalid.", key);
+                        key.channel ();
                         key.cancel ();
                     }
-
 
                 }
             }
