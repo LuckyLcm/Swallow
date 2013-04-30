@@ -10,7 +10,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * @author Chen Haoming
  */
-public abstract class HandlerTread extends BaseThread {
+public abstract class InteractionHandlerTread extends BaseThread {
 
     private static final int CAPACITY = 1024;
 
@@ -20,7 +20,7 @@ public abstract class HandlerTread extends BaseThread {
     private TimeUnit timeUnit = TimeUnit.MILLISECONDS;
     private SoftReference<ByteBuffer> bufferCache;
 
-    HandlerTread (Server server) {
+    InteractionHandlerTread(Server server) {
         this.server = server;
     }
 
