@@ -1,6 +1,6 @@
 package cn.swallowserver.nio;
 
-import cn.swallowserver.BaseThread;
+import cn.swallowserver.ThreadTemplate;
 
 import java.lang.ref.SoftReference;
 import java.nio.ByteBuffer;
@@ -9,7 +9,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * @author Chen Haoming
  */
-public abstract class IOThread extends BaseThread {
+public abstract class IOThread extends ThreadTemplate {
 
     private static final int CAPACITY = 1024;
 
@@ -17,7 +17,7 @@ public abstract class IOThread extends BaseThread {
     private int bufferCapacity = CAPACITY;
     private int timeout = DEFAULT_TIMEOUT;
     private TimeUnit timeUnit = TimeUnit.MILLISECONDS;
-    private SoftReference<ByteBuffer> bufferCache;
+    private SoftReference<ByteBuffer> bufferCache = new SoftReference<ByteBuffer> (ByteBuffer.allocate (bufferCapacity));
 
     IOThread(Server server) {
         if (null == server) {

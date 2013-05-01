@@ -1,6 +1,6 @@
 package cn.swallowserver.nio;
 
-import cn.swallowserver.session.BaseResponse;
+import cn.swallowserver.interaction.BaseResponse;
 import cn.swallowserver.session.Session;
 
 import java.io.OutputStream;

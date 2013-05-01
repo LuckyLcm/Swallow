@@ -1,11 +1,10 @@
 package cn.swallowserver.nio;
 
 import cn.swallowserver.AttributeHolder;
-import cn.swallowserver.BaseThread;
-import cn.swallowserver.HandlerThread;
+import cn.swallowserver.ThreadTemplate;
+import cn.swallowserver.SwallowServer;
 import cn.swallowserver.event.Event;
 import cn.swallowserver.event.Notifier;
-import cn.swallowserver.session.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,7 +22,7 @@ import java.util.Map;
 /**
  * @author Chen Haoming
  */
-public class Server extends BaseThread implements AttributeHolder {
+public class Server extends ThreadTemplate implements AttributeHolder, SwallowServer {
 
     private static final transient Logger log = LoggerFactory.getLogger (Server.class);
 
@@ -34,9 +33,8 @@ public class Server extends BaseThread implements AttributeHolder {
 
     private Reader reader;
     private Writer writer;
-    private HandlerThread handlerThread;
 
-    private Map<SocketChannel, Session> socketChannelSessionMap = new HashMap<SocketChannel, Session> ();
+    private Map<SocketChannel, NIOSession> socketChannelSessionMap = new HashMap<SocketChannel, NIOSession> ();
 
     Notifier notifier = new Notifier ();
 
@@ -84,7 +82,7 @@ public class Server extends BaseThread implements AttributeHolder {
                         }
 
                         if (key.isReadable()) {
-                            //reader.read (new BaseRequest (key));
+                            reader.read (key);
                             notifier.fireRead(new Event(key));
                         }
                     } else {
@@ -123,14 +121,6 @@ public class Server extends BaseThread implements AttributeHolder {
         this.encoding = encoding;
     }
 
-    public void setHandlerThread(HandlerThread handlerThread) {
-        this.handlerThread = handlerThread;
-    }
-
-    HandlerThread getHandlerThread() {
-        return handlerThread;
-    }
-
     @Override
     public Object getAttribute(String key) {
         throw new UnsupportedOperationException();  //To change body of created methods use File | Settings | File Templates.
@@ -139,5 +129,9 @@ public class Server extends BaseThread implements AttributeHolder {
     @Override
     public void setAttribute(String key, Object value) {
         throw new UnsupportedOperationException();  //To change body of created methods use File | Settings | File Templates.
+    }
+
+    public Map<SocketChannel, NIOSession> getSocketChannelSessionMap() {
+        return socketChannelSessionMap;
     }
 }

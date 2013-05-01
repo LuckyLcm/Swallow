@@ -1,5 +1,6 @@
 package cn.swallowserver.nio;
 
+import cn.swallowserver.session.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,17 +49,15 @@ public class Reader extends IOThread {
                 allBytesRead = new byte[temBytes.length + bytes.length];
                 System.arraycopy (temBytes, 0, allBytesRead, 0, temBytes.length);
                 System.arraycopy (bytes, 0, allBytesRead, temBytes.length, bytes.length);
+                NIORequestImpl request = new NIORequestImpl(getServer().getSocketChannelSessionMap().get(channel));
+                request.setOriginalMessage(allBytesRead);
             }
         } catch (IOException e) {
             log.error ("Exception occurred when reading from SocketChannel:{}\nMessage:", channel, e.getMessage ());
             return;
         }
 
-
-        String msg = Charset.forName (getServer ().getEncoding ()).decode (ByteBuffer.wrap (allBytesRead)).toString ();
         buffer.clear ();
-        log.debug ("Read message: {}", msg);
-        // todo: deal with msg;
     }
 
     @Override

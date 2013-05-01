@@ -7,14 +7,10 @@ import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.util.Map;
 
-/**
- * @author Chen Haoming
- */
+
 public interface Session extends AttributeHolder {
 
-    InetSocketAddress getRemoteAddress ();
-
-    InetSocketAddress getLocalAddress ();
+    SessionContext getSessionContext();
 
     boolean isValid ();
 

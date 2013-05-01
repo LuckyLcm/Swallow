@@ -1,13 +1,13 @@
 package cn.swallowserver.nio;
 
-import cn.swallowserver.session.BaseRequest;
+import cn.swallowserver.interaction.BaseRequest;
+import cn.swallowserver.interaction.RequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
+import java.nio.charset.Charset;
 
 /**
  * @author Chen Haoming
@@ -20,9 +20,8 @@ public class NIORequestImpl extends BaseRequest implements NIORequest {
 
     private byte[] originalMessage;
 
-    public NIORequestImpl(NIOSession session, byte[] originalMessage) {
+    public NIORequestImpl(NIOSession session) {
         super(session);
-        this.originalMessage = originalMessage;
     }
 
     public ByteBuffer getBuffer () {
@@ -39,4 +38,19 @@ public class NIORequestImpl extends BaseRequest implements NIORequest {
         return originalMessage;
     }
 
+    @Override
+    public String getMessage() {
+        String msg = Charset.forName("").decode (ByteBuffer.wrap (getOriginalMessage())).toString ();
+        log.debug ("Read message: {}", msg);
+        return msg;
+    }
+
+    @Override
+    public RequestContext getRequestContext() {
+        throw new UnsupportedOperationException();  //To change body of created methods use File | Settings | File Templates.
+    }
+
+    public void setOriginalMessage(byte[] originalMessage) {
+        this.originalMessage = originalMessage;
+    }
 }
