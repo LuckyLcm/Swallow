@@ -34,15 +34,8 @@ public abstract class BaseSession implements Session {
         return remoteAddress;
     }
 
-    public void setRemoteAddress (InetSocketAddress remoteAddress) {
-        this.remoteAddress = remoteAddress;
-    }
-
     public InetSocketAddress getLocalAddress () {
         return localAddress;
     }
 
-    public void setLocalAddress (InetSocketAddress localAddress) {
-        this.localAddress = localAddress;
-    }
 }

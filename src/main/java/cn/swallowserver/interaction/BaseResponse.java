@@ -1,7 +1,5 @@
-package cn.swallowserver.session;
+package cn.swallowserver.interaction;
 
-import cn.swallowserver.session.BaseInteraction;
-import cn.swallowserver.session.Response;
 import cn.swallowserver.session.Session;
 
 import java.io.OutputStream;

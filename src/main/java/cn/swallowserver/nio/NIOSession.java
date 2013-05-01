@@ -1,7 +1,7 @@
-package cn.swallowserver.session.nio;
+package cn.swallowserver.nio;
 
 import cn.swallowserver.session.BaseSession;
-import cn.swallowserver.session.Session;
+import cn.swallowserver.session.SessionContext;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -32,6 +32,11 @@ public class NIOSession extends BaseSession {
 
     public SocketChannel getSocketChannel () {
         return socketChannel;
+    }
+
+    @Override
+    public SessionContext getSessionContext() {
+        throw new UnsupportedOperationException();  //To change body of created methods use File | Settings | File Templates.
     }
 
     @Override
