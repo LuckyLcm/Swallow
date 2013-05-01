@@ -1,9 +1,10 @@
-package cn.swallowserver;
+package cn.swallowserver.nio;
 
+import cn.swallowserver.AttributeHolder;
+import cn.swallowserver.ThreadTemplate;
+import cn.swallowserver.SwallowServer;
 import cn.swallowserver.event.Event;
 import cn.swallowserver.event.Notifier;
-import cn.swallowserver.session.Session;
-import cn.swallowserver.session.nio.NIOSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,7 +22,7 @@ import java.util.Map;
 /**
  * @author Chen Haoming
  */
-public class Server extends BaseThread {
+public class Server extends ThreadTemplate implements AttributeHolder, SwallowServer {
 
     private static final transient Logger log = LoggerFactory.getLogger (Server.class);
 
@@ -33,7 +34,7 @@ public class Server extends BaseThread {
     private Reader reader;
     private Writer writer;
 
-    private Map<SocketChannel, Session> socketChannelSessionMap = new HashMap<SocketChannel, Session> ();
+    private Map<SocketChannel, NIOSession> socketChannelSessionMap = new HashMap<SocketChannel, NIOSession> ();
 
     Notifier notifier = new Notifier ();
 
@@ -81,12 +82,11 @@ public class Server extends BaseThread {
                         }
 
                         if (key.isReadable()) {
-                            //reader.read (new BaseRequest (key));
+                            reader.read (key);
                             notifier.fireRead(new Event(key));
                         }
                     } else {
                         log.warn ("Key[{}] is invalid.", key);
-                        key.channel();
                         key.cancel ();
                     }
 
@@ -119,5 +119,19 @@ public class Server extends BaseThread {
 
     public void setEncoding (String encoding) {
         this.encoding = encoding;
+    }
+
+    @Override
+    public Object getAttribute(String key) {
+        throw new UnsupportedOperationException();  //To change body of created methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public void setAttribute(String key, Object value) {
+        throw new UnsupportedOperationException();  //To change body of created methods use File | Settings | File Templates.
+    }
+
+    public Map<SocketChannel, NIOSession> getSocketChannelSessionMap() {
+        return socketChannelSessionMap;
     }
 }

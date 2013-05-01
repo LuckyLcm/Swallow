@@ -1,4 +1,6 @@
-package cn.swallowserver.session;
+package cn.swallowserver.interaction;
+
+import cn.swallowserver.session.Session;
 
 import java.nio.channels.SelectionKey;
 import java.nio.channels.SocketChannel;

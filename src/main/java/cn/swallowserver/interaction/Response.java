@@ -1,11 +1,11 @@
-package cn.swallowserver.session;
+package cn.swallowserver.interaction;
 
 import java.io.OutputStream;
 
 /**
  * @author Chen Haoming
  */
-public interface Response {
+public interface Response extends Interaction {
 
     OutputStream getOut();
 }

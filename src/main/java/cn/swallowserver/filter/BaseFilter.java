@@ -1,6 +1,6 @@
 package cn.swallowserver.filter;
 
-import cn.swallowserver.session.Request;
+import cn.swallowserver.interaction.Request;
 
 /**
  * @author Chen Haoming

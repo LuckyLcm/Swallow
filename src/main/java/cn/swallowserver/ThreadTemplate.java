@@ -6,10 +6,10 @@ import org.slf4j.LoggerFactory;
 /**
  * @author Chen Haoming
  */
-public abstract class BaseThread extends Thread {
+public abstract class ThreadTemplate extends Thread {
 
     public static final int DEFAULT_TIMEOUT = 5000;
-    private static final transient Logger log = LoggerFactory.getLogger (BaseThread.class);
+    private static final transient Logger log = LoggerFactory.getLogger (ThreadTemplate.class);
 
     private boolean isRunning = true;
 
@@ -31,7 +31,9 @@ public abstract class BaseThread extends Thread {
         postRunning ();
     }
 
-    protected abstract void preRunning ();
+    protected void preRunning (){
+
+    }
 
     /**
      * Running method which should be implemented by a concrete class.
@@ -40,7 +42,9 @@ public abstract class BaseThread extends Thread {
      */
     protected abstract void running () throws InterruptedException;
 
-    protected abstract void postRunning ();
+    protected void postRunning (){
+
+    }
 
     /**
      * Stop the current thread if it's alive. Otherwise it has no effect.
@@ -48,8 +52,8 @@ public abstract class BaseThread extends Thread {
     public void stopThread () {
         if (this.isAlive ()) {
             this.isRunning = false;
+            this.interrupt();
             log.debug ("Stopping current thread.");
         }
-
     }
 }

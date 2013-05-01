@@ -1,6 +1,5 @@
-package cn.swallowserver;
+package cn.swallowserver.nio;
 
-import cn.swallowserver.session.BaseResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,15 +14,15 @@ import java.util.concurrent.LinkedBlockingQueue;
 /**
  * @author Chen Haoming
  */
-public class Writer extends InteractionHandlerTread {
+public class Writer extends IOThread {
 
     private static final transient Logger log = LoggerFactory.getLogger (Writer.class);
 
-    private static BlockingQueue<BaseResponse> responseQueue;
+    private static BlockingQueue<NIOResponse> responseQueue;
 
     Writer (Server server) {
         super (server);
-        responseQueue = new LinkedBlockingQueue<BaseResponse>();
+        responseQueue = new LinkedBlockingQueue<NIOResponse>();
     }
 
     @Override
@@ -33,7 +32,7 @@ public class Writer extends InteractionHandlerTread {
 
     @Override
     protected void running () {
-        BaseResponse response = responseQueue.poll();
+        NIOResponse response = responseQueue.poll();
         SocketChannel channel = response.getSocketChannel();
         ByteBuffer buffer = getBuffer ();
         buffer.clear ();
@@ -65,7 +64,7 @@ public class Writer extends InteractionHandlerTread {
 
     }
 
-    public void write(BaseResponse response) {
+    public void write(NIOResponse response) {
         responseQueue.offer(response);
     }
 }
