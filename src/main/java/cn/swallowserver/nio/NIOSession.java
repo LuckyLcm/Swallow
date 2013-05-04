@@ -57,4 +57,9 @@ public class NIOSession extends BaseSession {
         SelectionKey writeKey = socketChannel.register(selector, SelectionKey.OP_WRITE);
         return new NIOSession (socketChannel, readKey, writeKey);
     }
+
+    @Override
+    public Object getAttribute(String name, Object defaultAttr) {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
 }
