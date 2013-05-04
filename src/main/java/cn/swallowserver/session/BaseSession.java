@@ -11,7 +11,6 @@ import java.util.Map;
  */
 public abstract class BaseSession extends BaseAttributeHolder implements Session {
 
-    private Map<String, Object> attributes = new HashMap<String, Object> ();
 
     private InetSocketAddress remoteAddress;
 
@@ -22,15 +21,6 @@ public abstract class BaseSession extends BaseAttributeHolder implements Session
         this.localAddress = localAddress;
     }
 
-    @Override
-    public Object getAttribute (String name) {
-        return attributes.get (name);
-    }
-
-    @Override
-    public void setAttribute (String name, Object attr) {
-        attributes.put (name, attr);
-    }
 
     public InetSocketAddress getRemoteAddress () {
         return remoteAddress;
