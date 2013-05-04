@@ -15,6 +15,7 @@ public abstract class ThreadTemplate extends Thread {
 
     @Override
     public final void run () {
+        log.debug("The current thread starts to run.");
         preRunning ();
 
         while (isRunning) {
@@ -29,6 +30,7 @@ public abstract class ThreadTemplate extends Thread {
         }
 
         postRunning ();
+        log.debug("The current thread ends normally.");
     }
 
     protected void preRunning (){
