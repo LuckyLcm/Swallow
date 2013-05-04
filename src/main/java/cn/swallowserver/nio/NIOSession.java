@@ -28,7 +28,7 @@ public class NIOSession implements Session {
 
     private SessionContext sessionContext;
 
-    private Object validLock = new Object ();
+    private final Object validLock = new Object ();
 
     public NIOSession (SocketChannel socketChannel, SessionContext sessionContext) {
         this.socketChannel = socketChannel;
