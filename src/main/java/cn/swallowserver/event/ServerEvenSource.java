@@ -5,17 +5,6 @@ package cn.swallowserver.event;
  */
 public interface ServerEvenSource {
 
-    void fireAccepted (Event event);
+    void register(ServerEventNotifier notifier);
 
-    void fireConnected ();
-
-    void fireRead (Event event);
-
-    void fireWritten (Event event);
-
-    void fireClosed ();
-
-    void addListener (ServerListener listener);
-
-    void removeListener (ServerListener listener);
 }
