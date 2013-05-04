@@ -1,5 +1,7 @@
 package cn.swallowserver.session;
 
+import cn.swallowserver.BaseAttributeHolder;
+
 import java.net.InetSocketAddress;
 import java.util.HashMap;
 import java.util.Map;
@@ -7,7 +9,7 @@ import java.util.Map;
 /**
  * @author Chen Haoming
  */
-public abstract class BaseSession implements Session {
+public abstract class BaseSession extends BaseAttributeHolder implements Session {
 
     private Map<String, Object> attributes = new HashMap<String, Object> ();
 
