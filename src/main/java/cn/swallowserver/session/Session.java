@@ -8,7 +8,7 @@ import java.net.SocketAddress;
 import java.util.Map;
 
 
-public interface Session extends AttributeHolder {
+public interface Session {
 
     SessionContext getSessionContext();
 
