@@ -1,6 +1,7 @@
 package cn.swallowserver.session;
 
 import cn.swallowserver.AttributeHolder;
+import cn.swallowserver.SwallowServer;
 
 import java.net.InetSocketAddress;
 
@@ -10,4 +11,6 @@ import java.net.InetSocketAddress;
 public interface SessionContext extends AttributeHolder {
 
     InetSocketAddress getRemoteAddress ();
+
+    SwallowServer getSwallowServer();
 }

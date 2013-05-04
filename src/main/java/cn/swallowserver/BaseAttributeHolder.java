@@ -17,6 +17,15 @@ public class BaseAttributeHolder implements AttributeHolder {
 
     @Override
     public void setAttribute(String key, Object value) {
-        attributes.put(key,value);
+        attributes.put(key, value);
+    }
+
+    @Override
+    public Object getAttribute(String name, Object defaultAttr) {
+        return attributes.containsKey(name) ? attributes.get(name) : defaultAttr;
+    }
+
+    protected void setAttributes(Map<String, Object> attributes) {
+        this.attributes = attributes;
     }
 }
