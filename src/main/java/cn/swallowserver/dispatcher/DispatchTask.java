@@ -1,7 +1,7 @@
 package cn.swallowserver.dispatcher;
 
-import cn.swallowserver.RequestHandler;
 import cn.swallowserver.filter.RequestFilterChain;
+import cn.swallowserver.handler.RequestHandler;
 import cn.swallowserver.interaction.Request;
 
 /**
@@ -18,23 +18,23 @@ public class DispatchTask implements Runnable {
     private RequestFilterChain filterChain;
 
     @Override
-    public void run() {
+    public void run () {
         //To change body of implemented methods use File | Settings | File Templates.
     }
 
-    public void setRequest(Request request) {
+    void setRequest (Request request) {
         this.request = request;
     }
 
-    public void setHandler(RequestHandler handler) {
+    void setHandler (RequestHandler handler) {
         this.handler = handler;
     }
 
-    public void setDispatcher(Dispatcher dispatcher) {
+    void setDispatcher (Dispatcher dispatcher) {
         this.dispatcher = dispatcher;
     }
 
-    public void setFilterChain(RequestFilterChain filterChain) {
+    void setFilterChain (RequestFilterChain filterChain) {
         this.filterChain = filterChain;
     }
 }
