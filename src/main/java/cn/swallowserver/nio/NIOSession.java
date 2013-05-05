@@ -1,7 +1,9 @@
 package cn.swallowserver.nio;
 
-import cn.swallowserver.session.BaseSession;
+import cn.swallowserver.SwallowServer;
+import cn.swallowserver.session.Session;
 import cn.swallowserver.session.SessionContext;
+import cn.swallowserver.session.SessionContextImpl;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -9,11 +11,12 @@ import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
+import java.util.Map;
 
 /**
  * @author Chen Haoming
  */
-public class NIOSession extends BaseSession {
+public class NIOSession implements Session {
 
     private boolean valid = true;
 
@@ -23,11 +26,13 @@ public class NIOSession extends BaseSession {
 
     private SelectionKey writeKey;
 
-    public NIOSession (SocketChannel socketChannel, SelectionKey readKey, SelectionKey writeKey) throws IOException {
-        super ((InetSocketAddress) socketChannel.getRemoteAddress (),
-                (InetSocketAddress) socketChannel.getLocalAddress ());
-        this.readKey = readKey;
-        this.writeKey = writeKey;
+    private SessionContext sessionContext;
+
+    private final Object validLock = new Object ();
+
+    public NIOSession (SocketChannel socketChannel, SessionContext sessionContext) {
+        this.socketChannel = socketChannel;
+        this.sessionContext = sessionContext;
     }
 
     public SocketChannel getSocketChannel () {
@@ -35,31 +40,38 @@ public class NIOSession extends BaseSession {
     }
 
     @Override
-    public SessionContext getSessionContext() {
-        throw new UnsupportedOperationException();  //To change body of created methods use File | Settings | File Templates.
+    public SessionContext getSessionContext () {
+        return sessionContext;
     }
 
     @Override
     public boolean isValid () {
-        return valid;
+        synchronized (validLock) {
+            return valid;
+        }
     }
 
     @Override
     public void invalid () throws IOException {
-        socketChannel.close ();
-        this.valid = false;
+        synchronized (validLock) {
+            if (valid) {
+                socketChannel.close ();
+                this.valid = false;
+                Server server = (Server) sessionContext.getSwallowServer ();
+                Map<SocketChannel, NIOSession> map = server.getSocketChannelSessionMap ();
+                map.remove (socketChannel);
+            }
+        }
+
     }
 
     public static NIOSession create (Selector selector, ServerSocketChannel serverSocketChannel) throws IOException {
         SocketChannel socketChannel = serverSocketChannel.accept ();
         socketChannel.configureBlocking (false);
-        SelectionKey readKey = socketChannel.register(selector, SelectionKey.OP_READ);
-        SelectionKey writeKey = socketChannel.register(selector, SelectionKey.OP_WRITE);
-        return new NIOSession (socketChannel, readKey, writeKey);
+        NIOSession session = new NIOSession (socketChannel, new SessionContextImpl ((InetSocketAddress) socketChannel.getRemoteAddress ()));
+        session.readKey = socketChannel.register (selector, SelectionKey.OP_READ);
+        session.writeKey = socketChannel.register (selector, SelectionKey.OP_WRITE);
+        return session;
     }
 
-    @Override
-    public Object getAttribute(String name, Object defaultAttr) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
-    }
 }

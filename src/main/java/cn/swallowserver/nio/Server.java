@@ -19,6 +19,7 @@ import java.nio.channels.SocketChannel;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author Chen Haoming
@@ -35,7 +36,7 @@ public class Server extends ThreadTemplate implements SwallowServer {
     private Reader reader;
     private Writer writer;
 
-    private Map<SocketChannel, NIOSession> socketChannelSessionMap = new HashMap<SocketChannel, NIOSession> ();
+    private Map<SocketChannel, NIOSession> socketChannelSessionMap = new ConcurrentHashMap<SocketChannel, NIOSession> ();
 
     ServerContext serverContext;
 
