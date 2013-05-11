@@ -58,4 +58,8 @@ public abstract class ThreadTemplate extends Thread {
             log.debug ("Stopping current thread.");
         }
     }
+
+    protected boolean isRunning() {
+        return isRunning;
+    }
 }
