@@ -3,15 +3,16 @@ package cn.swallowserver.dispatcher;
 import cn.swallowserver.filter.RequestFilterChain;
 import cn.swallowserver.handler.RequestHandler;
 import cn.swallowserver.interaction.Request;
+import cn.swallowserver.interaction.Response;
+
 
 /**
  * @author Chen Haoming
  */
-public interface Dispatcher {
+public interface Dispatcher extends Runnable {
 
-    void dispatch(Request request);
+    void setRequestFilterChain (RequestFilterChain requestFilterChain);
 
-    void setRequestFilterChain(RequestFilterChain requestFilterChain);
+    void setRequestHandler (RequestHandler requestHandler);
 
-    void setRequestHandler(RequestHandler requestHandler);
 }
