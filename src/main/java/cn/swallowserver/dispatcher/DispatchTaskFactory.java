@@ -13,14 +13,11 @@ public class DispatchTaskFactory {
 
     private RequestHandler requestHandler;
 
-    private Dispatcher dispatcher;
-
     public DispatchTask create (Request request) {
         DispatchTask task = new DispatchTask ();
-        task.setFilterChain (requestFilterChain);
-        task.setHandler (requestHandler);
+        task.setRequestFilterChain (requestFilterChain);
+        task.setRequestHandler (requestHandler);
         task.setRequest (request);
-        task.setDispatcher (dispatcher);
         return task;
     }
 
@@ -30,9 +27,5 @@ public class DispatchTaskFactory {
 
     public void setRequestHandler (RequestHandler requestHandler) {
         this.requestHandler = requestHandler;
-    }
-
-    public void setDispatcher (Dispatcher dispatcher) {
-        this.dispatcher = dispatcher;
     }
 }

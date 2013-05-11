@@ -3,38 +3,47 @@ package cn.swallowserver.dispatcher;
 import cn.swallowserver.filter.RequestFilterChain;
 import cn.swallowserver.handler.RequestHandler;
 import cn.swallowserver.interaction.Request;
+import cn.swallowserver.interaction.Response;
+import cn.swallowserver.interaction.ResponseFactory;
+import cn.swallowserver.nio.NIOResponseImpl;
 
 /**
  * @author ICMLucky
  */
-public class DispatchTask implements Runnable {
+public class DispatchTask implements Dispatcher {
 
     private Request request;
 
-    private RequestHandler handler;
+    private RequestHandler requestHandler;
 
-    private Dispatcher dispatcher;
+    private RequestFilterChain requestFilterChain;
 
-    private RequestFilterChain filterChain;
+    private ResponseFactory responseFactory;
+
+    DispatchTask () {
+
+    }
 
     @Override
     public void run () {
-        //To change body of implemented methods use File | Settings | File Templates.
+        Request request1 = requestFilterChain.filter (request);
+        Response response = responseFactory.create (request1);
+        requestHandler.handle (request1, response);
     }
 
-    void setRequest (Request request) {
+    public void setRequest (Request request) {
         this.request = request;
     }
 
-    void setHandler (RequestHandler handler) {
-        this.handler = handler;
+    public void setRequestHandler (RequestHandler requestHandler) {
+        this.requestHandler = requestHandler;
     }
 
-    void setDispatcher (Dispatcher dispatcher) {
-        this.dispatcher = dispatcher;
+    public void setRequestFilterChain (RequestFilterChain requestFilterChain) {
+        this.requestFilterChain = requestFilterChain;
     }
 
-    void setFilterChain (RequestFilterChain filterChain) {
-        this.filterChain = filterChain;
+    public void setResponseFactory (ResponseFactory responseFactory) {
+        this.responseFactory = responseFactory;
     }
 }
