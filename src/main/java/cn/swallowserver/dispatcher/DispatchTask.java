@@ -4,6 +4,7 @@ import cn.swallowserver.filter.RequestFilterChain;
 import cn.swallowserver.handler.RequestHandler;
 import cn.swallowserver.interaction.Request;
 import cn.swallowserver.interaction.Response;
+import cn.swallowserver.interaction.ResponseFactory;
 import cn.swallowserver.nio.NIOResponseImpl;
 
 /**
@@ -17,13 +18,17 @@ public class DispatchTask implements Dispatcher {
 
     private RequestFilterChain requestFilterChain;
 
+    private ResponseFactory responseFactory;
+
     DispatchTask () {
 
     }
 
     @Override
     public void run () {
-
+        Request request1 = requestFilterChain.filter (request);
+        Response response = responseFactory.create (request1);
+        requestHandler.handle (request1, response);
     }
 
     public void setRequest (Request request) {
@@ -38,6 +43,7 @@ public class DispatchTask implements Dispatcher {
         this.requestFilterChain = requestFilterChain;
     }
 
-
-
+    public void setResponseFactory (ResponseFactory responseFactory) {
+        this.responseFactory = responseFactory;
+    }
 }
