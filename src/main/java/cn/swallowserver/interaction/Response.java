@@ -1,5 +1,6 @@
 package cn.swallowserver.interaction;
 
+import java.io.IOException;
 import java.io.OutputStream;
 
 /**
@@ -7,5 +8,9 @@ import java.io.OutputStream;
  */
 public interface Response extends Interaction {
 
-    OutputStream getOut();
+    OutputStream getOut ();
+
+    boolean isClosed ();
+
+    void close () throws IOException;
 }

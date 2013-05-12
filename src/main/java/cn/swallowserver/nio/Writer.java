@@ -1,13 +1,17 @@
 package cn.swallowserver.nio;
 
+import cn.swallowserver.session.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
 import java.nio.charset.Charset;
 import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -18,11 +22,11 @@ public class Writer extends IOThread {
 
     private static final transient Logger log = LoggerFactory.getLogger (Writer.class);
 
-    private static BlockingQueue<NIOResponse> responseQueue;
+    private BlockingQueue<NIOPushMessage> pushMessagesQueue;
 
     Writer (Server server) {
         super (server);
-        responseQueue = new LinkedBlockingQueue<NIOResponse>();
+        pushMessagesQueue = new LinkedBlockingQueue<NIOPushMessage> ();
     }
 
     @Override
@@ -32,30 +36,31 @@ public class Writer extends IOThread {
 
     @Override
     protected void running () {
-        NIOResponse response = responseQueue.poll();
-        SocketChannel channel = response.getSocketChannel();
-        ByteBuffer buffer = getBuffer ();
-        buffer.clear ();
-        byte[] allBytesRead = new byte[0];
+        NIOPushMessage pushMessage = pushMessagesQueue.poll ();
+        NIOSession session = (NIOSession) pushMessage.getSession ();
+        SocketChannel channel = session.getSocketChannel ();
+        InputStream inputStream = pushMessage.getMessage ();
+        List<ByteBuffer> bufferList = new LinkedList<ByteBuffer> ();
 
         try {
-            int len = channel.read (buffer);
-            if (len > 0) {
-                buffer.flip ();
-                byte[] bytes = Arrays.copyOf (buffer.array (), len);
-                byte[] temBytes = allBytesRead;
-                allBytesRead = new byte[temBytes.length + bytes.length];
-                System.arraycopy (temBytes, 0, allBytesRead, 0, temBytes.length);
-                System.arraycopy (bytes, 0, allBytesRead, temBytes.length, bytes.length);
+            int capacity = inputStream.available ();
+
+            while (capacity > 0) {
+                byte[] bytes = new byte[capacity];
+                inputStream.read (bytes);
+                ByteBuffer buffer = ByteBuffer.wrap (bytes);
+                bufferList.add (buffer);
+                capacity = inputStream.available ();
+            }
+
+            if ( ! bufferList.isEmpty ()) {
+                channel.write ((ByteBuffer[]) bufferList.toArray ());
             }
         } catch (IOException e) {
-            log.error ("Exception occurred when reading from SocketChannel:{}\nMessage:", channel, e.getMessage ());
-            return;
+            // todo: handle exception
         }
 
-        String msg = Charset.forName (getServer ().getEncoding ()).decode (ByteBuffer.wrap (allBytesRead)).toString ();
-        buffer.clear ();
-        log.debug ("Write message: {}", msg);
+        log.debug ("Write message: {}");
         // todo: deal with msg;
     }
 
@@ -64,7 +69,7 @@ public class Writer extends IOThread {
 
     }
 
-    public void write(NIOResponse response) {
-        responseQueue.offer(response);
+    public void write (NIOPushMessage pushMessage) {
+        pushMessagesQueue.offer (pushMessage);
     }
 }
