@@ -5,12 +5,15 @@ import cn.swallowserver.handler.RequestHandler;
 import cn.swallowserver.interaction.Request;
 import cn.swallowserver.interaction.Response;
 import cn.swallowserver.interaction.ResponseFactory;
-import cn.swallowserver.nio.NIOResponseImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author ICMLucky
  */
 public class DispatchTask implements Dispatcher {
+
+    private static final transient Logger log = LoggerFactory.getLogger (DispatchTask.class);
 
     private Request request;
 
@@ -26,9 +29,17 @@ public class DispatchTask implements Dispatcher {
 
     @Override
     public void run () {
-        Request request1 = requestFilterChain.filter (request);
-        Response response = responseFactory.create (request1);
-        requestHandler.handle (request1, response);
+        try {
+            Response response = responseFactory.create (request);
+            requestFilterChain.filter (request, response);
+            if (!response.isClosed ()) {
+                requestHandler.handle (request, response);
+                response.close ();
+            }
+        } catch (Throwable e) {
+            log.error ("Exception occurred: ", e);
+            // todo: tell client that server has thrown an exception.
+        }
     }
 
     public void setRequest (Request request) {

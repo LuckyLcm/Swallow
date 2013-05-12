@@ -1,11 +1,12 @@
 package cn.swallowserver.filter;
 
 import cn.swallowserver.interaction.Request;
+import cn.swallowserver.interaction.Response;
 
 /**
  * @author Chen Haoming
  */
 public interface RequestFilter {
 
-    Request filter(Request request);
+    void filter (Request request, Response response);
 }
