@@ -8,15 +8,22 @@ import cn.swallowserver.interaction.Response;
  */
 public abstract class BaseFilter implements RequestFilterChain {
 
-    private RequestFilter next;
+    private RequestFilterChain next;
 
+    /**
+     *
+     *
+     *
+     * @param requestFilter the next filer chain element. It filters request right after the current filter.
+     * @return the next filter chain element which has been set.
+     */
     @Override
-    public RequestFilter setNext (RequestFilter requestFilter) {
+    public RequestFilterChain setNext (RequestFilterChain requestFilter) {
         this.next = requestFilter;
-        return this;
+        return next;
     }
 
-    public void filter (Request request, Response response) {
+    public final void filter (Request request, Response response) {
         doFilter (request, response);
 
         if (!response.isClosed () && null != next) {
@@ -25,4 +32,8 @@ public abstract class BaseFilter implements RequestFilterChain {
     }
 
     protected abstract void doFilter (Request request, Response response);
+
+    protected RequestFilterChain getNext () {
+        return next;
+    }
 }
