@@ -3,6 +3,7 @@ package cn.swallowserver.dispatcher;
 import cn.swallowserver.filter.RequestFilterChain;
 import cn.swallowserver.handler.RequestHandler;
 import cn.swallowserver.interaction.Request;
+import cn.swallowserver.interaction.Response;
 
 /**
  * @author ICMLucky
@@ -21,8 +22,29 @@ public class DispatchTaskFactory {
         return task;
     }
 
-    public void setRequestFilterChain (RequestFilterChain requestFilterChain) {
-        this.requestFilterChain = requestFilterChain;
+    public void setRequestFilterChains (RequestFilterChain[] requestFilterChains) {
+        if (null != requestFilterChains && requestFilterChains.length > 0) {
+            this.requestFilterChain = requestFilterChains[0];
+            RequestFilterChain currentFilter = this.requestFilterChain;
+
+            for (int i = 1; i < requestFilterChains.length; ++i) {
+                currentFilter.setNext (requestFilterChains[i]);
+                currentFilter = requestFilterChains[i];
+            }
+
+            currentFilter.setNext (new RequestFilterChain () {
+
+                @Override
+                public RequestFilterChain setNext (RequestFilterChain requestFilter) {
+                    throw new UnsupportedOperationException ();
+                }
+
+                @Override
+                public void filter (Request request, Response response) {
+                    requestHandler.handle (request, response);
+                }
+            });
+        }
     }
 
     public void setRequestHandler (RequestHandler requestHandler) {
