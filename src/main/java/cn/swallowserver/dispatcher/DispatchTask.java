@@ -33,6 +33,7 @@ public class DispatchTask implements Dispatcher {
         try {
             Response response = responseFactory.create (request);
             requestFilterChain.filter (request, response);
+
             if (!response.isClosed ()) {
                 requestHandler.handle (request, response);
                 response.close ();

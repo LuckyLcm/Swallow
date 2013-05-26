@@ -36,7 +36,8 @@ public class DispatchTaskFactory {
 
                 @Override
                 public RequestFilterChain setNext (RequestFilterChain requestFilter) {
-                    throw new UnsupportedOperationException ();
+                    throw new UnsupportedOperationException (
+                            "It's designed to be the last request filter. So never set next filter to it.");
                 }
 
                 @Override
