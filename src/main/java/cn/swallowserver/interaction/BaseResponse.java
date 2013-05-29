@@ -6,6 +6,10 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 /**
+ *
+ * Base response to the client's request. A request is designed to be handled in a single thread and only one response
+ * to each request. So none of requests' and responses' method is thread-safe.
+ *
  * @author Chen Haoming
  */
 public abstract class BaseResponse extends BaseInteraction implements Response {
@@ -27,6 +31,7 @@ public abstract class BaseResponse extends BaseInteraction implements Response {
     public void close () throws IOException {
         if (!isClosed ()) {
             OutputStream os = getOut ();
+
             try {
                 os.flush ();
             } finally {
@@ -34,5 +39,17 @@ public abstract class BaseResponse extends BaseInteraction implements Response {
                 closed = true;
             }
         }
+    }
+
+    protected void setOut (OutputStream out) {
+        if ( null == out ) {
+            throw new NullPointerException();
+        }
+
+        this.out = out;
+    }
+
+    public OutputStream getOut () {
+        return out;
     }
 }

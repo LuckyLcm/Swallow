@@ -1,5 +1,6 @@
 package cn.swallowserver.dispatcher;
 
+import cn.swallowserver.filter.BaseFilter;
 import cn.swallowserver.filter.RequestFilterChain;
 import cn.swallowserver.handler.RequestHandler;
 import cn.swallowserver.interaction.Request;
@@ -32,6 +33,7 @@ public class DispatchTask implements Dispatcher {
         try {
             Response response = responseFactory.create (request);
             requestFilterChain.filter (request, response);
+
             if (!response.isClosed ()) {
                 requestHandler.handle (request, response);
                 response.close ();
@@ -57,4 +59,5 @@ public class DispatchTask implements Dispatcher {
     public void setResponseFactory (ResponseFactory responseFactory) {
         this.responseFactory = responseFactory;
     }
+
 }

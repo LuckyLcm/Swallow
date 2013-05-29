@@ -2,9 +2,8 @@ package cn.swallowserver.dispatcher;
 
 import cn.swallowserver.filter.RequestFilterChain;
 import cn.swallowserver.handler.RequestHandler;
-import cn.swallowserver.interaction.Request;
-import cn.swallowserver.interaction.Response;
 
+import java.util.List;
 
 /**
  * @author Chen Haoming

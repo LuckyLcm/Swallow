@@ -12,8 +12,7 @@ public class NIOResponseFactory implements ResponseFactory {
 
     @Override
     public Response create (Request request) {
-        Response response = new NIOResponseImpl (request.getSession ());
-        return response;
+        return new NIOResponseImpl (request.getSession ());
 
     }
 }
