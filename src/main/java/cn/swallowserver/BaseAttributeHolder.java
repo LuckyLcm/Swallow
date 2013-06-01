@@ -6,7 +6,7 @@ import java.util.Map;
 /**
  * @author Chen Haoming
  */
-public class BaseAttributeHolder implements AttributeHolder {
+public abstract class BaseAttributeHolder implements AttributeHolder {
 
     private Map<String, Object> attributes = new HashMap<String, Object>();
 
