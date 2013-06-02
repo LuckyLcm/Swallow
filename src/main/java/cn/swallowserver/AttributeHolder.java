@@ -26,15 +26,15 @@ public interface AttributeHolder {
 
     Date getDate (String key);
 
-    String getString (String key, Object defaultAttr);
+    String getString (String key, String defaultAttr);
 
-    Integer getInt (String key, Object defaultAttr);
+    Integer getInt (String key, Integer defaultAttr);
 
-    Long getLong (String key, Object defaultAttr);
+    Long getLong (String key, Long defaultAttr);
 
-    Float getFloat (String key, Object defaultAttr);
+    Float getFloat (String key, Float defaultAttr);
 
-    Double getDouble (String key, Object defaultAttr);
+    Double getDouble (String key, Double defaultAttr);
 
-    Date getDate (String key, Object defaultAttr);
+    Date getDate (String key, Date defaultAttr);
 }
